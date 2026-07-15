@@ -1,0 +1,20 @@
+services:
+  apigateway:
+    container_name: apigateway
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_CONFIGURATION: Release
+
+    ports:
+      - "3000:3000"
+
+    env_file:
+      - .env
+
+    environment:
+      ASPNETCORE_URLS: http://+:3000
+      ASPNETCORE_ENVIRONMENT: Development
+
+    restart: unless-stopped
