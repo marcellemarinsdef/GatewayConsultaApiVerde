@@ -2,7 +2,10 @@ using ApiConsultaProcesso;
 using ApiConsultaProcesso.Services;
 using DotNetEnv;
 
-Env.Load();
+if (File.Exists(".env"))
+{
+    Env.Load();
+}
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -29,7 +32,7 @@ builder.Services
         options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(45);
     });
 
-builder.Services.Configure<VerdeApiSettings>(options =>
+builder.Services.Configure<ConsultaVerdeSettings>(options =>
 {
     options.ClientID = Environment.GetEnvironmentVariable("CLIENT_ID");
     options.Token = Environment.GetEnvironmentVariable("TOKEN");
@@ -54,8 +57,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
 
 app.UseCors("NextJs");
 
