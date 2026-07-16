@@ -1,7 +1,14 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
 ### DotnetCore ###
 # .NET Core build folders
 bin/
 obj/
+
+# Variáveis locais
 .env
 
 # Common node modules locations

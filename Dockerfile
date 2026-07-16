@@ -5,7 +5,6 @@ USER $APP_UID
 WORKDIR /app
 
 EXPOSE 3000
-EXPOSE 3001
 
 
 # Esta fase é usada para compilar o projeto
@@ -15,13 +14,13 @@ ARG BUILD_CONFIGURATION=Release
 
 WORKDIR /src
 
-COPY ["ApiGateway.csproj", "./"]
+COPY ["ApiConsultaProcesso.csproj", "./"]
 
-RUN dotnet restore "./ApiGateway.csproj"
+RUN dotnet restore "./ApiConsultaProcesso.csproj"
 
 COPY . .
 
-RUN dotnet build "./ApiGateway.csproj" \
+RUN dotnet build "./ApiConsultaProcesso.csproj" \
     -c $BUILD_CONFIGURATION \
     -o /app/build
 
@@ -31,7 +30,7 @@ FROM build AS publish
 
 ARG BUILD_CONFIGURATION=Release
 
-RUN dotnet publish "./ApiGateway.csproj" \
+RUN dotnet publish "./ApiConsultaProcesso.csproj" \
     -c $BUILD_CONFIGURATION \
     -o /app/publish \
     /p:UseAppHost=false
@@ -44,4 +43,4 @@ WORKDIR /app
 
 COPY --from=publish /app/publish .
 
-ENTRYPOINT ["dotnet", "ApiGateway.dll"]
+ENTRYPOINT ["dotnet", "ApiConsultaProcesso.dll"]
