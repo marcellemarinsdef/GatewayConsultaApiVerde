@@ -37,7 +37,7 @@ jobs:
         run: |
           docker run -d \
           --name api-consulta-processo-test \
-          -p 3000:3000 \
+          -p 3000:8080 \
           api-consulta-processo-test:$IMAGE_TAG
 
       - name: Esperar API iniciar
