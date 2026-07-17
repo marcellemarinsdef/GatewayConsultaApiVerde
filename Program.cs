@@ -23,8 +23,11 @@ builder.Services.AddSwaggerGen();
 builder.Services
     .AddHttpClient<IProcessoService, ProcessoService>(client =>
     {
-        client.BaseAddress = new Uri(
-            Environment.GetEnvironmentVariable("BASE_URL_VERDE")!);
+        var baseUrl = Environment.GetEnvironmentVariable("BASE_URL_VERDE")
+     ?? throw new InvalidOperationException(
+         "BASE_URL_VERDE não configurada.");
+
+        client.BaseAddress = new Uri(baseUrl);
     })
     .AddStandardResilienceHandler(options =>
     {

@@ -26,7 +26,9 @@ jobs:
 
       - name: Build da imagem
         run: |
-          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+          docker build \
+            -f Dockerfile.lambda \
+            -t $ECR_REPOSITORY:$IMAGE_TAG .
 
       - name: Subir container para teste
         run: |
@@ -42,7 +44,7 @@ jobs:
         run: |
           for i in {1..30}; do
 
-            if curl -fs http://localhost:3000/swagger/index.html; then
+            if curl -fs http://localhost:3000/health; then
               echo "API funcionando"
               exit 0
             fi
@@ -95,3 +97,15 @@ jobs:
         run: |
           docker push \
             ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
+
+      - name: Atualizar Lambda
+        run: |
+          aws lambda update-function-code \
+          --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
+          --image-uri \
+          ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Esperar atualização
+        run: |
+          aws lambda wait function-updated \
+          --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }}
