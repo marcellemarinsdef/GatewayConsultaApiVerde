@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build, Test and Deploy
 
 on:
   push:
@@ -21,49 +21,63 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Definir TAG
-        run: |
-          echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
+        run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
 
-      - name: Build da imagem
+      ####################################################
+      # BUILD DA IMAGEM DE TESTE (Dockerfile)
+      ####################################################
+
+      - name: Build imagem de teste
+        run: |
+          docker build \
+          -f Dockerfile \
+          -t api-consulta-processo-test:$IMAGE_TAG .
+
+      - name: Subir API
+        run: |
+          docker run -d \
+          --name api-consulta-processo-test \
+          -p 3000:3000 \
+          api-consulta-processo-test:$IMAGE_TAG
+
+      - name: Esperar API iniciar
+        run: |
+          for i in {1..30}; do
+            if curl -fs http://localhost:3000/health; then
+              echo "API OK"
+              exit 0
+            fi
+
+            sleep 2
+          done
+
+          docker logs api-consulta-processo-test
+          exit 1
+
+      # Aqui entram os testes E2E futuramente
+      #
+      # - name: Executar testes
+      #   run: dotnet test tests/ApiConsultaProcesso.E2E
+
+      - name: Remover container
+        if: always()
+        run: |
+          docker stop api-consulta-processo-test || true
+          docker rm api-consulta-processo-test || true
+
+      ####################################################
+      # BUILD DA IMAGEM LAMBDA
+      ####################################################
+
+      - name: Build imagem Lambda
         run: |
           docker build \
             -f Dockerfile.lambda \
             -t $ECR_REPOSITORY:$IMAGE_TAG .
 
-      - name: Subir container para teste
-        run: |
-          docker run -d \
-            --name api-consulta-processo \
-            -p 3000:3000 \
-            -e ASPNETCORE_URLS=http://+:3000 \
-            -e ASPNETCORE_ENVIRONMENT=Development \
-            $ECR_REPOSITORY:$IMAGE_TAG
-
-
-      - name: Aguardar API iniciar
-        run: |
-          for i in {1..30}; do
-
-            if curl -fs http://localhost:3000/health; then
-              echo "API funcionando"
-              exit 0
-            fi
-
-            echo "Aguardando API..."
-            sleep 2
-
-          done
-
-          echo "API não iniciou"
-          docker logs api-consulta-processo
-          exit 1
-
-
-      - name: Parar container de teste
-        if: always()
-        run: |
-          docker stop api-consulta-processo || true
-          docker rm api-consulta-processo || true
+      ####################################################
+      # DEPLOY
+      ####################################################
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -72,28 +86,26 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login no Amazon ECR
+      - name: Login no ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Criar tag SHA para o ECR
+      - name: Criar tags
         run: |
           docker tag \
             $ECR_REPOSITORY:$IMAGE_TAG \
             ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Criar tag latest
-        run: |
           docker tag \
             $ECR_REPOSITORY:$IMAGE_TAG \
             ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
 
-      - name: Push da imagem (SHA)
+      - name: Push SHA
         run: |
           docker push \
             ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Push da imagem (latest)
+      - name: Push latest
         run: |
           docker push \
             ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
@@ -101,11 +113,11 @@ jobs:
       - name: Atualizar Lambda
         run: |
           aws lambda update-function-code \
-          --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
-          --image-uri \
-          ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
+            --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
+            --image-uri \
+            ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Esperar atualização
         run: |
           aws lambda wait function-updated \
-          --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }}
+            --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }}
