@@ -1,0 +1,23 @@
+FROM public.ecr.aws/lambda/dotnet:8 AS base
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+WORKDIR /src
+
+COPY ["ApiConsultaProcesso.csproj", "./"]
+
+RUN dotnet restore
+
+COPY . .
+
+RUN dotnet publish \
+    -c Release \
+    -o /app/publish
+
+FROM base
+
+WORKDIR /var/task
+
+COPY --from=build /app/publish .
+
+CMD ["ApiConsultaProcesso"]
