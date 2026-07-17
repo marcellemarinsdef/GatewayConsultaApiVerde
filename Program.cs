@@ -66,4 +66,13 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapGet("/health", () =>
+{
+    return Results.Ok(new
+    {
+        service = "ApiConsultaProcesso",
+        status = "healthy"
+    });
+});
+
 app.Run();
