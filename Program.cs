@@ -1,6 +1,7 @@
 using ApiConsultaProcesso;
 using ApiConsultaProcesso.Services;
 using DotNetEnv;
+using Amazon.Lambda.AspNetCoreServer.Hosting;
 
 if (File.Exists(".env"))
 {
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -63,5 +65,14 @@ app.UseCors("NextJs");
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGet("/health", () =>
+{
+    return Results.Ok(new
+    {
+        service = "ApiConsultaProcesso",
+        status = "healthy"
+    });
+});
 
 app.Run();
