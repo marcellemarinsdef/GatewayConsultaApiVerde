@@ -20,6 +20,49 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Definir TAG
+        run: |
+          echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
+
+      - name: Build da imagem
+        run: |
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+
+      - name: Subir container para teste
+        run: |
+          docker run -d \
+            --name api-consulta-processo \
+            -p 3000:3000 \
+            -e ASPNETCORE_URLS=http://+:3000 \
+            -e ASPNETCORE_ENVIRONMENT=Development \
+            $ECR_REPOSITORY:$IMAGE_TAG
+
+
+      - name: Aguardar API iniciar
+        run: |
+          for i in {1..30}; do
+
+            if curl -fs http://localhost:3000/swagger/index.html; then
+              echo "API funcionando"
+              exit 0
+            fi
+
+            echo "Aguardando API..."
+            sleep 2
+
+          done
+
+          echo "API não iniciou"
+          docker logs api-consulta-processo
+          exit 1
+
+
+      - name: Parar container de teste
+        if: always()
+        run: |
+          docker stop api-consulta-processo || true
+          docker rm api-consulta-processo || true
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -30,14 +73,6 @@ jobs:
       - name: Login no Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Definir TAG
-        run: |
-          echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
-
-      - name: Build da imagem
-        run: |
-          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
 
       - name: Criar tag SHA para o ECR
         run: |
