@@ -1,7 +1,8 @@
+using Amazon.Lambda.AspNetCoreServer.Hosting;
 using ApiConsultaProcesso;
 using ApiConsultaProcesso.Services;
 using DotNetEnv;
-using Amazon.Lambda.AspNetCoreServer.Hosting;
+using System.Reflection;
 
 if (File.Exists(".env"))
 {
@@ -53,6 +54,13 @@ builder.Services.AddCors(options =>
  );
     });
 });
+builder.Services.AddSwaggerGen(options =>
+{
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+    options.IncludeXmlComments(xmlPath);
+});
 
 var app = builder.Build();
 
@@ -76,6 +84,10 @@ app.MapGet("/health", () =>
         service = "ApiConsultaProcesso",
         status = "healthy"
     });
-});
+}).WithSummary("Verifica a disponibilidade do endpoint de consulta de processos.")
+.WithDescription("""
+Utilizado para executar o health check da aplicação antes de sua implantação
+nos serviços da AWS.
+""");
 
 app.Run();
