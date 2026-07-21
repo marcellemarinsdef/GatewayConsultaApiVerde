@@ -38,6 +38,16 @@ builder.Services
         options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(45);
     });
 
+builder.Services
+    .AddHttpClient<IVerdeApiClient, VerdeApiClient>(client =>
+    {
+        var baseUrl = Environment.GetEnvironmentVariable("BASE_URL_VERDE")
+     ?? throw new InvalidOperationException(
+         "BASE_URL_VERDE não configurada.");
+
+        client.BaseAddress = new Uri(baseUrl);
+    });
+
 builder.Services.Configure<ConsultaVerdeSettings>(options =>
 {
     options.ClientID = Environment.GetEnvironmentVariable("CLIENT_ID");
