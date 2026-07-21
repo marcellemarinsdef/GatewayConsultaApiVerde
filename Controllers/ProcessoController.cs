@@ -1,8 +1,8 @@
-﻿using ApiConsultaProcesso.Services;
+﻿using GatewayConsultaApiVerde.Services;
 using Microsoft.AspNetCore.Mvc;
 using Polly.Timeout;
 
-namespace ApiConsultaProcesso.Controllers
+namespace GatewayConsultaApiVerde.Controllers
 {
     [ApiController]
     [Route("api/processos")]

@@ -1,10 +1,10 @@
-﻿using ApiConsultaProcesso.Exceptions;
-using ApiConsultaProcesso.Models;
+﻿using GatewayConsultaApiVerde.Exceptions;
+using GatewayConsultaApiVerde.Models;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 
-namespace ApiConsultaProcesso.Services
+namespace GatewayConsultaApiVerde.Services
 {
     public class ProcessoService: IProcessoService
     {

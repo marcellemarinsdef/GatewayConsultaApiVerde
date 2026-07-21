@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ApiConsultaProcesso.Models
+namespace GatewayConsultaApiVerde.Models
 {
     public class MovimentosDTO
     {
@@ -12,6 +12,6 @@ namespace ApiConsultaProcesso.Models
         [JsonPropertyName("descricao")]
         public string Descricao { get; set; }
         [JsonPropertyName("traducao")]
-        public string traducao { get; set; }
+        public string Traducao { get; set; }
     }
 }

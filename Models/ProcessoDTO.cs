@@ -1,4 +1,4 @@
-﻿namespace ApiConsultaProcesso.Models;
+﻿namespace GatewayConsultaApiVerde.Models;
 using System.Text.Json.Serialization;
 
 

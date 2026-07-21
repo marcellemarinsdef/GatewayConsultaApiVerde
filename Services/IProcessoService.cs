@@ -1,6 +1,6 @@
-﻿using ApiConsultaProcesso.Models;
+﻿using GatewayConsultaApiVerde.Models;
 
-namespace ApiConsultaProcesso.Services
+namespace GatewayConsultaApiVerde.Services
 {
     public interface IProcessoService
     {

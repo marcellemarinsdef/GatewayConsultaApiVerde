@@ -1,6 +1,6 @@
 using Amazon.Lambda.AspNetCoreServer.Hosting;
-using ApiConsultaProcesso;
-using ApiConsultaProcesso.Services;
+using GatewayConsultaApiVerde;
+using GatewayConsultaApiVerde.Services;
 using DotNetEnv;
 using System.Reflection;
 

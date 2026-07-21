@@ -1,4 +1,4 @@
-﻿namespace ApiConsultaProcesso
+﻿namespace GatewayConsultaApiVerde
 {
     public class ConsultaVerdeSettings
     {

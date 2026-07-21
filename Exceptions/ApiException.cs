@@ -1,4 +1,4 @@
-﻿namespace ApiConsultaProcesso.Exceptions
+﻿namespace GatewayConsultaApiVerde.Exceptions
 {
     public class ApiException : Exception
     {
