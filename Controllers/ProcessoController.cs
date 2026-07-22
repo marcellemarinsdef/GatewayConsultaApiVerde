@@ -15,7 +15,7 @@ namespace GatewayConsultaApiVerde.Controllers
             _processoService = processoService;
         }
         ///<summary>
-        ///Realiza uma consulta à API do Verde utilizando o número do processo informado pelo usuário
+        ///Realiza uma consulta à API do Verde utilizando o número do processo informado pelo usuário.
         ///</summary>
         ///<remarks>
         ///<para>

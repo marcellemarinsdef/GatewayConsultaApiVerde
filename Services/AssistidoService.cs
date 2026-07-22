@@ -5,18 +5,18 @@ using System.Text.Json;
 
 namespace GatewayConsultaApiVerde.Services
 {
-    public class VerdeApiClient : IVerdeApiClient
+    public class AssistidoService : IAssistidoService
     {
         private readonly HttpClient _httpClient;
         private readonly ConsultaVerdeSettings _consultaVerdeSettings;
 
-        public VerdeApiClient(HttpClient httpClient, IOptions<ConsultaVerdeSettings> consultaVerdeSettings)
+        public AssistidoService(HttpClient httpClient, IOptions<ConsultaVerdeSettings> consultaVerdeSettings)
         {
             _httpClient = httpClient;
             _consultaVerdeSettings = consultaVerdeSettings.Value;
         }
 
-        public async Task<PessoaDTO.RespostaDTO> GetPessoaAsync(string cpfPessoa)
+        public async Task<AssistidoDTO.RespostaDTO> GetAssistidoAsync(string cpfPessoa)
         {
             var clientId = _consultaVerdeSettings.ClientID;
             var token = _consultaVerdeSettings.Token;
@@ -33,9 +33,10 @@ namespace GatewayConsultaApiVerde.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<PessoaDTO.RespostaDTO>(json, new JsonSerializerOptions
+            return JsonSerializer.Deserialize<AssistidoDTO.RespostaDTO>(json, new JsonSerializerOptions
             {
-                PropertyNameCaseInsensitive = true,               
+                PropertyNameCaseInsensitive = true
+                
             });
         }
     }
