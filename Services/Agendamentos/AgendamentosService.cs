@@ -20,22 +20,15 @@ namespace GatewayConsultaApiVerde.Services.Agendamentos
             _assistidoService = assistidoService;
         }
 
-        public async Task<AgendamentosDTO.RespostaAgendamentosDTO> GetAgendamentosAsync(string cpfPessoa)
+        public async Task<JsonDocument> GetAgendamentosAsync(string cpfPessoa)
         {
-            var clientId = _consultaVerdeSettings.ClientID;
-            var token = _consultaVerdeSettings.Token;
+            var responseAssistido = await _assistidoService.GetIdAssistidoAsync(cpfPessoa);
 
-            var requestAssistido = new HttpRequestMessage(HttpMethod.Get, $"pessoa?cpf={cpfPessoa}");
-            requestAssistido.Headers.Add("Authorization", token);
-            requestAssistido.Headers.Add("X-Client-ID", clientId);
-
-            var responseAssistido = await _assistidoService.GetAssistidoAsync(cpfPessoa);
-
-            var idPessoa = responseAssistido?.Dados?.Id;
+            var idPessoa = responseAssistido?.Dados.Id;
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"agendamento/listar-agendamentos-pessoa/{idPessoa}");
-            request.Headers.Add("Authorization", token);
-            request.Headers.Add("X-Client-ID", clientId);
+            request.Headers.Add("Authorization", _consultaVerdeSettings.Token);
+            request.Headers.Add("X-Client-ID", _consultaVerdeSettings.ClientID);
 
             var response = await _httpClient.SendAsync(request);
 
@@ -45,12 +38,8 @@ namespace GatewayConsultaApiVerde.Services.Agendamentos
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<AgendamentosDTO.RespostaAgendamentosDTO>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
 
-            });
-
+            return JsonDocument.Parse(json);
         }
 
     }

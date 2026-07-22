@@ -1,9 +1,10 @@
 ﻿using GatewayConsultaApiVerde.Models;
+using System.Text.Json;
 
 namespace GatewayConsultaApiVerde.Services.Agendamentos
 {
     public interface IAgendamentosService
     {
-        Task<AgendamentosDTO.RespostaAgendamentosDTO> GetAgendamentosAsync(string cpfPessoa);
+        Task<JsonDocument> GetAgendamentosAsync(string cpfPessoa);
     }
 }

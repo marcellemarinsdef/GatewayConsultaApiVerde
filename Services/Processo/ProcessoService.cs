@@ -17,7 +17,7 @@ namespace GatewayConsultaApiVerde.Services.Processo
             _consultaVerdeSettings = consultaVerdeSettings.Value;
         }
 
-        public async Task<ProcessoDTO.RespostaDTO> GetProcessoAsync(string numeroProcesso)
+        public async Task<JsonDocument> GetProcessoAsync(string numeroProcesso)
         {
             var clientId = _consultaVerdeSettings.ClientID;
             var token = _consultaVerdeSettings.Token;
@@ -34,14 +34,8 @@ namespace GatewayConsultaApiVerde.Services.Processo
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<ProcessoDTO.RespostaDTO>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                Converters =
-                 {
-                      new DateTimeConverter()
-                }
-            });
+
+            return JsonDocument.Parse(json);
         }
     }
 }
