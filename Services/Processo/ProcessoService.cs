@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 
-namespace GatewayConsultaApiVerde.Services
+namespace GatewayConsultaApiVerde.Services.Processo
 {
     public class ProcessoService: IProcessoService
     {

@@ -13,7 +13,7 @@ namespace GatewayConsultaApiVerde.Models
             public string? Mensagem { get; set; }
 
             [JsonPropertyName("dados")]
-            public Assistido? Dados { get; set; }
+            public Assistido Dados { get; set; }
         }
 
         public class Assistido
@@ -82,7 +82,7 @@ namespace GatewayConsultaApiVerde.Models
         public class TelefoneAssistido
         {
             [JsonPropertyName("id")]
-            public int Id { get; set; }
+            public int? Id { get; set; }
 
             [JsonPropertyName("numeroTelefone")]
             public string? NumeroTelefone { get; set; }

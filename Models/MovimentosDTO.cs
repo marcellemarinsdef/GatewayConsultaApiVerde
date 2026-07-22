@@ -10,8 +10,8 @@ namespace GatewayConsultaApiVerde.Models
         [JsonConverter(typeof(DateTimeConverter))]
         public DateTime? Data { get; set; }
         [JsonPropertyName("descricao")]
-        public string Descricao { get; set; }
+        public string? Descricao { get; set; }
         [JsonPropertyName("traducao")]
-        public string Traducao { get; set; }
+        public string? Traducao { get; set; }
     }
 }

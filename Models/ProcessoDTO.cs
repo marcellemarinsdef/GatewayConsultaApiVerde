@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
         public class RespostaDTO
         {
         [JsonPropertyName("dados")]
-        public Processo? Dados { get; set; }
+        public Processo Dados { get; set; }
         }
         public class Processo
         {

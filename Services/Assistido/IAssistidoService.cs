@@ -1,6 +1,6 @@
 ﻿using GatewayConsultaApiVerde.Models;
 
-namespace GatewayConsultaApiVerde.Services
+namespace GatewayConsultaApiVerde.Services.Assistido
 {
     public interface IAssistidoService
     {
