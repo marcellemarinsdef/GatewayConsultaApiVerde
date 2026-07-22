@@ -1,10 +1,10 @@
-﻿using ApiConsultaProcesso.Exceptions;
-using ApiConsultaProcesso.Models;
+﻿using GatewayConsultaApiVerde.Exceptions;
+using GatewayConsultaApiVerde.Models;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 
-namespace ApiConsultaProcesso.Services
+namespace GatewayConsultaApiVerde.Services.Processo
 {
     public class ProcessoService: IProcessoService
     {
@@ -17,7 +17,7 @@ namespace ApiConsultaProcesso.Services
             _consultaVerdeSettings = consultaVerdeSettings.Value;
         }
 
-        public async Task<ProcessoDTO.RespostaDTO> GetProcessoAsync(string numeroProcesso)
+        public async Task<JsonDocument> GetProcessoAsync(string numeroProcesso)
         {
             var clientId = _consultaVerdeSettings.ClientID;
             var token = _consultaVerdeSettings.Token;
@@ -34,14 +34,8 @@ namespace ApiConsultaProcesso.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<ProcessoDTO.RespostaDTO>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                Converters =
-                 {
-                      new DateTimeConverter()
-                }
-            });
+
+            return JsonDocument.Parse(json);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ApiConsultaProcesso.Exceptions
+﻿namespace GatewayConsultaApiVerde.Exceptions
 {
     public class ApiException : Exception
     {
@@ -14,14 +14,14 @@
         {
             return statusCode switch
             {
-                400 => "Parâmetro número de processo inválido",
+                400 => "Parâmetro inválido",
                 401 => "Não autorizado para acessar a API externa.",
                 403 => "Acesso negado pela API externa.",
-                404 => "Processo não encontrado.",
-                422 => "Número de processo inválido",
+                404 => "Dado não encontrado.",
+                422 => "Número inválido",
                 500 => "Erro interno na API externa.",
                 503 => "A API externa está indisponível.",
-                _ => "Erro ao consultar processo na API externa."
+                _ => "Erro ao consultar na API externa."
             };
         }
     }

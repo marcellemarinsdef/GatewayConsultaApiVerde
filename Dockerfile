@@ -14,13 +14,13 @@ ARG BUILD_CONFIGURATION=Release
 
 WORKDIR /src
 
-COPY ["ApiConsultaProcesso.csproj", "./"]
+COPY ["GatewayConsultaApiVerde.csproj", "./"]
 
-RUN dotnet restore "./ApiConsultaProcesso.csproj"
+RUN dotnet restore "./GatewayConsultaApiVerde.csproj"
 
 COPY . .
 
-RUN dotnet build "./ApiConsultaProcesso.csproj" \
+RUN dotnet build "./GatewayConsultaApiVerde.csproj" \
     -c $BUILD_CONFIGURATION \
     -o /app/build
 
@@ -30,7 +30,7 @@ FROM build AS publish
 
 ARG BUILD_CONFIGURATION=Release
 
-RUN dotnet publish "./ApiConsultaProcesso.csproj" \
+RUN dotnet publish "./GatewayConsultaApiVerde.csproj" \
     -c $BUILD_CONFIGURATION \
     -o /app/publish \
     /p:UseAppHost=false
@@ -43,4 +43,4 @@ WORKDIR /app
 
 COPY --from=publish /app/publish .
 
-ENTRYPOINT ["dotnet", "ApiConsultaProcesso.dll"]
+ENTRYPOINT ["dotnet", "GatewayConsultaApiVerde.dll"]
