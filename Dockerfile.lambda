@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 WORKDIR /src
 
-COPY ["GatewayApiVerde.csproj", "./"]
+COPY ["GatewayConsultaApiVerde.csproj", "./"]
 
 RUN dotnet restore
 
@@ -20,4 +20,4 @@ WORKDIR /var/task
 
 COPY --from=build /app/publish .
 
-CMD ["GatewayApiVerde"]
+CMD ["GatewayConsultaApiVerde"]
