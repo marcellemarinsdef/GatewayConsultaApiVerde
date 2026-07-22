@@ -16,7 +16,7 @@ namespace GatewayConsultaApiVerde.Controllers
             _client = agendamentosService;
         }
         ///<summary>
-        ///Realiza uma consulta à API do Verde utilizando o número do cpf para retornar os dados do assistido.
+        ///Realiza uma consulta à API do Verde utilizando o número do cpf para retornar os agendamentos do assistido.
         ///</summary>
         ///<remarks>
         ///<para>
@@ -27,7 +27,7 @@ namespace GatewayConsultaApiVerde.Controllers
         ///</para>
         /// </remarks>
         ///<param name="cpf">Número do cpf do assistido</param>
-        ///<returns>Dados de cadastro do assistido</returns>
+        ///<returns>Dados de agendamentos do assistido</returns>
         [HttpGet("{cpf}")]
         public async Task<IActionResult> Get(string cpf)
         {
