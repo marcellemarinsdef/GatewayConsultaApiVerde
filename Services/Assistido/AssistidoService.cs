@@ -3,7 +3,7 @@ using GatewayConsultaApiVerde.Models;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
-namespace GatewayConsultaApiVerde.Services
+namespace GatewayConsultaApiVerde.Services.Assistido
 {
     public class AssistidoService : IAssistidoService
     {

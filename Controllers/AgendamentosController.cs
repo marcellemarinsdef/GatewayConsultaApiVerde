@@ -1,18 +1,19 @@
-﻿using GatewayConsultaApiVerde.Services.Assistido;
+﻿using GatewayConsultaApiVerde.Services;
+using GatewayConsultaApiVerde.Services.Agendamentos;
 using Microsoft.AspNetCore.Mvc;
 using Polly.Timeout;
 
 namespace GatewayConsultaApiVerde.Controllers
 {
     [ApiController]
-    [Route("api/assistido")]
-    public class AssistidoController : Controller
+    [Route("api/agendamentos")]
+    public class AgendamentosController : Controller
     {
-        private readonly IAssistidoService _client;
+        private readonly IAgendamentosService _client;
 
-        public AssistidoController(IAssistidoService pessoaService)
+        public AgendamentosController(IAgendamentosService agendamentosService)
         {
-            _client = pessoaService;
+            _client = agendamentosService;
         }
         ///<summary>
         ///Realiza uma consulta à API do Verde utilizando o número do cpf para retornar os dados do assistido.
@@ -37,7 +38,7 @@ namespace GatewayConsultaApiVerde.Controllers
 
             try
             {
-                var processo = await _client.GetAssistidoAsync(cpf);
+                var processo = await _client.GetAgendamentosAsync(cpf);
 
                 return Ok(processo);
             }
@@ -45,7 +46,7 @@ namespace GatewayConsultaApiVerde.Controllers
             {
                 return StatusCode(
                     StatusCodes.Status504GatewayTimeout,
-                    "Tempo limite excedido ao consultar o cpf."
+                    "Tempo limite excedido ao consultar os agendamentos."
                 );
             }
         }
