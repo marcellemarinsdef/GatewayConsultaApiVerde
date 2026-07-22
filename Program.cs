@@ -39,19 +39,28 @@ builder.Services
     });
 
 builder.Services
-    .AddHttpClient<IVerdeApiClient, VerdeApiClient>(client =>
+    .AddHttpClient<IAssistidoService, AssistidoService>(client =>
     {
         var baseUrl = Environment.GetEnvironmentVariable("BASE_URL_VERDE")
      ?? throw new InvalidOperationException(
          "BASE_URL_VERDE não configurada.");
 
         client.BaseAddress = new Uri(baseUrl);
+    }).AddStandardResilienceHandler(options =>
+    {
+        options.Retry.MaxRetryAttempts = 2;
+        options.Retry.Delay = TimeSpan.FromSeconds(2);
+        options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(15);
+        options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(45);
     });
 
 builder.Services.Configure<ConsultaVerdeSettings>(options =>
 {
-    options.ClientID = Environment.GetEnvironmentVariable("CLIENT_ID");
-    options.Token = Environment.GetEnvironmentVariable("TOKEN");
+    options.ClientID = Environment.GetEnvironmentVariable("CLIENT_ID")
+       ?? throw new InvalidOperationException("CLIENT_ID não foi definida.");
+
+    options.Token = Environment.GetEnvironmentVariable("TOKEN")
+        ?? throw new InvalidOperationException("TOKEN não foi definida.");
 });
 
 builder.Services.AddCors(options =>
