@@ -16,14 +16,12 @@ namespace GatewayConsultaApiVerde.Services.Assistido
             _consultaVerdeSettings = consultaVerdeSettings.Value;
         }
 
-        public async Task<AssistidoDTO.RespostaDTO> GetAssistidoAsync(string cpfPessoa)
+        private async Task<string> GetPessoaAsync(string cpfPessoa)
         {
-            var clientId = _consultaVerdeSettings.ClientID;
-            var token = _consultaVerdeSettings.Token;
-
             var request = new HttpRequestMessage(HttpMethod.Get, $"pessoa?cpf={cpfPessoa}");
-            request.Headers.Add("Authorization", token);
-            request.Headers.Add("X-Client-ID", clientId);
+
+            request.Headers.Add("Authorization", _consultaVerdeSettings.Token);
+            request.Headers.Add("X-Client-ID", _consultaVerdeSettings.ClientID);
 
             var response = await _httpClient.SendAsync(request);
 
@@ -32,11 +30,23 @@ namespace GatewayConsultaApiVerde.Services.Assistido
                 throw new ApiException((int)response.StatusCode);
             }
 
-            var json = await response.Content.ReadAsStringAsync();
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public async Task<JsonDocument> GetAssistidoAsync(string cpfPessoa)
+        {
+            var json = await GetPessoaAsync(cpfPessoa);
+
+            return JsonDocument.Parse(json);
+        }
+
+        public async Task<AssistidoDTO.RespostaDTO> GetIdAssistidoAsync(string cpfPessoa)
+        {
+            var json = await GetPessoaAsync(cpfPessoa);
+
             return JsonSerializer.Deserialize<AssistidoDTO.RespostaDTO>(json, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-                
             });
         }
     }
