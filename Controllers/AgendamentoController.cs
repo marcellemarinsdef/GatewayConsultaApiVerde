@@ -25,6 +25,10 @@ namespace GatewayConsultaApiVerde.Controllers
         ///</summary>
         ///<param name="idEvento">Id do evento (agendamento) no Verde</param>
         [HttpGet("{idEvento}")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> Get(int idEvento)
         {
             try
@@ -50,6 +54,10 @@ namespace GatewayConsultaApiVerde.Controllers
         ///</summary>
         ///<param name="idEvento">Id do evento (agendamento) no Verde</param>
         [HttpGet("vagas/{idEvento}")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> GetVagas(int idEvento)
         {
             try
@@ -75,6 +83,11 @@ namespace GatewayConsultaApiVerde.Controllers
         ///</summary>
         ///<param name="dados">idAgendamento, configuracaoIntervaloAgenda e dataNova</param>
         [HttpPost("reagendar")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> Reagendar([FromBody] ReagendarRequestDTO dados)
         {
             try
@@ -105,6 +118,11 @@ namespace GatewayConsultaApiVerde.Controllers
         ///do e-mail falha (sucesso parcial).
         ///</remarks>
         [HttpPost("desmarcar")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> Desmarcar([FromBody] DesmarcarRequestDTO dados)
         {
             try

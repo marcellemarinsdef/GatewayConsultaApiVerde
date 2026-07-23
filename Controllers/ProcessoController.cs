@@ -28,6 +28,9 @@ namespace GatewayConsultaApiVerde.Controllers
         ///<param name="numeroProcesso">Número do processo no verde</param>
         ///<returns>Movimento do processo</returns>
         [HttpGet("{numeroProcesso}")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> Get(string numeroProcesso)
         {
             if (string.IsNullOrWhiteSpace(numeroProcesso))

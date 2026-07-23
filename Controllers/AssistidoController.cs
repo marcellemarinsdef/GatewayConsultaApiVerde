@@ -28,6 +28,9 @@ namespace GatewayConsultaApiVerde.Controllers
         ///<param name="cpf">Número do cpf do assistido</param>
         ///<returns>Dados de cadastro do assistido</returns>
         [HttpGet("{cpf}")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> Get(string cpf)
         {
             if (string.IsNullOrWhiteSpace(cpf))
