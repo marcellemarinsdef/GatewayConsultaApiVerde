@@ -1,20 +1,19 @@
 ﻿using GatewayConsultaApiVerde.Exceptions;
 using GatewayConsultaApiVerde.Models;
+using GatewayConsultaApiVerde.Services.Agendamentos;
 using GatewayConsultaApiVerde.Services.Assistido;
-using GatewayConsultaApiVerde.Services.Casos;
 using GatewayConsultaApiVerde.Services.ConsultasBase;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
-using System.Xml.Linq;
 
-namespace GatewayConsultaApiVerde.Services.Agendamentos
+namespace GatewayConsultaApiVerde.Services.Casos
 {
-    public class AgendamentosService : IAgendamentosService
+    public class CasosService : ICasosService
     {
         private readonly IConsultaVerdeClient _consultaVerdeClient;
         private readonly IAssistidoService _assistidoService;
 
-        public AgendamentosService(
+        public CasosService(
             IConsultaVerdeClient consultaVerdeClient,
             IAssistidoService assistidoService)
         {
@@ -22,7 +21,7 @@ namespace GatewayConsultaApiVerde.Services.Agendamentos
             _assistidoService = assistidoService;
         }
 
-        public async Task<JsonDocument> GetAgendamentosAsync(string cpfPessoa)
+        public async Task<CasosDTO.RespostaDto> GetCasosAsync(string cpfPessoa)
         {
             var responseAssistido = await _assistidoService.GetIdAssistidoAsync(cpfPessoa);
 
@@ -30,8 +29,19 @@ namespace GatewayConsultaApiVerde.Services.Agendamentos
             var idPessoa = responseAssistido?.Dados.Id
                 ?? throw new Exception("Assistido não encontrado.");
 
-            return await _consultaVerdeClient.GetAsync(
-                $"agendamento/listar-agendamentos-pessoa/{idPessoa}");
+            var json = await _consultaVerdeClient.GetAsync(
+                $"caso/consultar-casos-pessoa/{idPessoa}");
+
+            var dto = JsonSerializer.Deserialize<CasosDTO.RespostaDto>(json);
+
+            if (dto?.Dados != null)
+            {
+                dto.Dados = dto.Dados
+                    .Where(c => c.Status.Equals("aberto", StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            return dto;
         }
     }
+
 }
