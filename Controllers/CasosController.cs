@@ -1,4 +1,5 @@
-﻿using GatewayConsultaApiVerde.Services.Casos;
+﻿using GatewayConsultaApiVerde.Models;
+using GatewayConsultaApiVerde.Services.Casos;
 using Microsoft.AspNetCore.Mvc;
 using Polly.Timeout;
 
@@ -28,6 +29,9 @@ namespace GatewayConsultaApiVerde.Controllers
         ///<param name="cpf">Número do cpf do assistido</param>
         ///<returns>Dados de casos do assistido</returns>
         [HttpGet("{cpf}")]
+        [ProducesResponseType(typeof(CasosDTO.RespostaDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> Get(string cpf)
         {
             if (string.IsNullOrWhiteSpace(cpf))
