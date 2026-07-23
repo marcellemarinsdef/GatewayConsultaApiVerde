@@ -1,10 +1,13 @@
 using Amazon.Lambda.AspNetCoreServer.Hosting;
-using GatewayConsultaApiVerde;
 using DotNetEnv;
-using System.Reflection;
+using GatewayConsultaApiVerde;
+using GatewayConsultaApiVerde.Services.Agendamento;
 using GatewayConsultaApiVerde.Services.Agendamentos;
 using GatewayConsultaApiVerde.Services.Assistido;
+using GatewayConsultaApiVerde.Services.Casos;
+using GatewayConsultaApiVerde.Services.ConsultasBase;
 using GatewayConsultaApiVerde.Services.Processo;
+using System.Reflection;
 
 if (File.Exists(".env"))
 {
@@ -57,7 +60,7 @@ builder.Services
     });
 
 builder.Services
-    .AddHttpClient<IAgendamentosService, AgendamentosService>(client =>
+    .AddHttpClient<IConsultaVerdeClient, ConsultaVerdeClient>(client =>
     {
         var baseUrl = Environment.GetEnvironmentVariable("BASE_URL_VERDE")
      ?? throw new InvalidOperationException(
@@ -71,6 +74,11 @@ builder.Services
         options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(15);
         options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(45);
     });
+
+builder.Services.AddScoped<ICasosService, CasosService>();
+builder.Services.AddScoped<IAgendamentosService, AgendamentosService>();
+builder.Services.AddScoped<IAgendamentoService, AgendamentoService>();
+
 
 builder.Services.Configure<ConsultaVerdeSettings>(options =>
 {
@@ -118,7 +126,9 @@ app.MapGet("/health", () =>
         service = "ApiConsultaProcesso",
         status = "healthy"
     });
-}).WithSummary("Verifica a disponibilidade do endpoint de consulta de processos.")
+})
+.WithTags("HealthCheck")
+.WithSummary("Verifica a disponibilidade do endpoint de consulta de processos.")
 .WithDescription("""
 Utilizado para executar o health check da aplicação antes de sua implantação
 nos serviços da AWS.
