@@ -1,6 +1,7 @@
 using Amazon.Lambda.AspNetCoreServer.Hosting;
 using DotNetEnv;
 using GatewayConsultaApiVerde;
+using GatewayConsultaApiVerde.Services.Agendamento;
 using GatewayConsultaApiVerde.Services.Agendamentos;
 using GatewayConsultaApiVerde.Services.Assistido;
 using GatewayConsultaApiVerde.Services.Casos;
@@ -76,6 +77,7 @@ builder.Services
 
 builder.Services.AddScoped<ICasosService, CasosService>();
 builder.Services.AddScoped<IAgendamentosService, AgendamentosService>();
+builder.Services.AddScoped<IAgendamentoService, AgendamentoService>();
 
 
 builder.Services.Configure<ConsultaVerdeSettings>(options =>
