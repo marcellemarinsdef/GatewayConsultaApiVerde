@@ -9,9 +9,8 @@ namespace GatewayConsultaApiVerde.Controllers
     // Rota singular ("agendamento") — evita colisão com a rota existente
     // GET api/agendamentos/{cpf} (AgendamentosController), que casaria com
     // {idEvento} se ficasse no mesmo controller.
-    [ApiController]
     [Route("api/agendamento")]
-    public class AgendamentoController : Controller
+    public class AgendamentoController : ApiControllerBase
     {
         private readonly IAgendamentoService _client;
 
@@ -26,9 +25,9 @@ namespace GatewayConsultaApiVerde.Controllers
         ///<param name="idEvento">Id do evento (agendamento) no Verde</param>
         [HttpGet("{idEvento}")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status504GatewayTimeout)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> Get(int idEvento)
         {
             try
@@ -38,14 +37,11 @@ namespace GatewayConsultaApiVerde.Controllers
             }
             catch (TimeoutRejectedException)
             {
-                return StatusCode(
-                    StatusCodes.Status504GatewayTimeout,
-                    "Tempo limite excedido ao consultar o agendamento."
-                );
+                return ErroTimeout("Tempo limite excedido ao consultar o agendamento.");
             }
             catch (ApiException ex)
             {
-                return StatusCode(ex.StatusCode, ex.Message);
+                return ErroApi(ex);
             }
         }
 
@@ -55,9 +51,9 @@ namespace GatewayConsultaApiVerde.Controllers
         ///<param name="idEvento">Id do evento (agendamento) no Verde</param>
         [HttpGet("vagas/{idEvento}")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status504GatewayTimeout)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> GetVagas(int idEvento)
         {
             try
@@ -67,14 +63,11 @@ namespace GatewayConsultaApiVerde.Controllers
             }
             catch (TimeoutRejectedException)
             {
-                return StatusCode(
-                    StatusCodes.Status504GatewayTimeout,
-                    "Tempo limite excedido ao consultar vagas."
-                );
+                return ErroTimeout("Tempo limite excedido ao consultar vagas.");
             }
             catch (ApiException ex)
             {
-                return StatusCode(ex.StatusCode, ex.Message);
+                return ErroApi(ex);
             }
         }
 
@@ -84,10 +77,10 @@ namespace GatewayConsultaApiVerde.Controllers
         ///<param name="dados">idAgendamento, configuracaoIntervaloAgenda e dataNova</param>
         [HttpPost("reagendar")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status422UnprocessableEntity)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status504GatewayTimeout)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> Reagendar([FromBody] ReagendarRequestDTO dados)
         {
             try
@@ -97,14 +90,11 @@ namespace GatewayConsultaApiVerde.Controllers
             }
             catch (TimeoutRejectedException)
             {
-                return StatusCode(
-                    StatusCodes.Status504GatewayTimeout,
-                    "Tempo limite excedido ao reagendar."
-                );
+                return ErroTimeout("Tempo limite excedido ao reagendar.");
             }
             catch (ApiException ex)
             {
-                return StatusCode(ex.StatusCode, ex.Message);
+                return ErroApi(ex);
             }
         }
 
@@ -120,9 +110,9 @@ namespace GatewayConsultaApiVerde.Controllers
         [HttpPost("desmarcar")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status422UnprocessableEntity)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status504GatewayTimeout)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> Desmarcar([FromBody] DesmarcarRequestDTO dados)
         {
             try
@@ -134,14 +124,11 @@ namespace GatewayConsultaApiVerde.Controllers
             }
             catch (TimeoutRejectedException)
             {
-                return StatusCode(
-                    StatusCodes.Status504GatewayTimeout,
-                    "Tempo limite excedido ao desmarcar."
-                );
+                return ErroTimeout("Tempo limite excedido ao desmarcar.");
             }
             catch (ApiException ex)
             {
-                return StatusCode(ex.StatusCode, ex.Message);
+                return ErroApi(ex);
             }
         }
     }
