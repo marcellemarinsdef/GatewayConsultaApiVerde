@@ -1,8 +1,10 @@
+using GatewayConsultaApiVerde.Services;
 using GatewayConsultaApiVerde.Exceptions;
 using GatewayConsultaApiVerde.Models;
 using GatewayConsultaApiVerde.Services.Agendamentos;
 using Microsoft.AspNetCore.Mvc;
 using Polly.Timeout;
+using GatewayConsultaApiVerde.Models.Responses;
 
 namespace GatewayConsultaApiVerde.Controllers
 {
@@ -19,17 +21,15 @@ namespace GatewayConsultaApiVerde.Controllers
         ///Realiza uma consulta à API do Verde utilizando o número do cpf para retornar os agendamentos do assistido.
         ///</summary>
         ///<remarks>
-        ///<para>
-        ///Parâmetro: cpf.
+        ///Parâmetro: cpf. 
         ///O endpoint aceita o número do cpf em um dos seguintes formatos:
         ///00000000000
         ///000.000.000-00
-        ///</para>
         /// </remarks>
         ///<param name="cpf">Número do cpf do assistido</param>
         ///<returns>Dados de agendamentos do assistido</returns>
         [HttpGet("{cpf}")]
-        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AgendamentosResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]

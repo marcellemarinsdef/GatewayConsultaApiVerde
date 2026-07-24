@@ -19,12 +19,10 @@ namespace GatewayConsultaApiVerde.Controllers
         ///Realiza uma consulta à API do Verde utilizando o número do cpf para retornar os casos do assistido.
         ///</summary>
         ///<remarks>
-        ///<para>
-        ///Parâmetro: cpf.
+        ///Parâmetro: cpf. 
         ///O endpoint aceita o número do cpf em um dos seguintes formatos:
         ///00000000000
         ///000.000.000-00
-        ///</para>
         /// </remarks>
         ///<param name="cpf">Número do cpf do assistido</param>
         ///<returns>Dados de casos do assistido</returns>

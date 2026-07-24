@@ -1,53 +1,61 @@
 ﻿using GatewayConsultaApiVerde.Exceptions;
 using GatewayConsultaApiVerde.Models;
-using Microsoft.Extensions.Options;
+using GatewayConsultaApiVerde.Services.ConsultasBase;
 using System.Text.Json;
 
 namespace GatewayConsultaApiVerde.Services.Assistido
 {
     public class AssistidoService : IAssistidoService
     {
-        private readonly HttpClient _httpClient;
-        private readonly ConsultaVerdeSettings _consultaVerdeSettings;
+        private readonly IConsultaVerdeClient _consultaVerdeClient;
 
-        public AssistidoService(HttpClient httpClient, IOptions<ConsultaVerdeSettings> consultaVerdeSettings)
+        public AssistidoService(IConsultaVerdeClient consultaVerdeClient)
         {
-            _httpClient = httpClient;
-            _consultaVerdeSettings = consultaVerdeSettings.Value;
-        }
-
-        private async Task<string> GetPessoaAsync(string cpfPessoa)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"pessoa?cpf={cpfPessoa}");
-
-            request.Headers.Add("Authorization", _consultaVerdeSettings.Token);
-            request.Headers.Add("X-Client-ID", _consultaVerdeSettings.ClientID);
-
-            var response = await _httpClient.SendAsync(request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApiException((int)response.StatusCode);
-            }
-
-            return await response.Content.ReadAsStringAsync();
+            _consultaVerdeClient = consultaVerdeClient;
         }
 
         public async Task<JsonDocument> GetAssistidoAsync(string cpfPessoa)
         {
-            var json = await GetPessoaAsync(cpfPessoa);
-
-            return JsonDocument.Parse(json);
+            return await _consultaVerdeClient.GetAsync(
+                $"pessoa?cpf={cpfPessoa}");
         }
+
+
 
         public async Task<AssistidoDTO.RespostaDTO> GetIdAssistidoAsync(string cpfPessoa)
         {
-            var json = await GetPessoaAsync(cpfPessoa);
+            var json = await GetAssistidoAsync(cpfPessoa);
 
             return JsonSerializer.Deserialize<AssistidoDTO.RespostaDTO>(json, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
+        }
+
+        public async Task<JsonDocument> CriarAssistidoAsync(CadastrarAssistidoRequestDTO dados)
+        {
+            var (_, body) = await _consultaVerdeClient.PostAsync("pessoa", dados);
+            return body ?? JsonDocument.Parse("{}");
+        }
+
+        // Verde identifica a pessoa por idPessoa (numérico), não cpf — resolve
+        // via GetIdAssistidoAsync antes de montar o payload (issue #31).
+        public async Task<JsonDocument> AtualizarAssistidoAsync(string cpfPessoa, AtualizarAssistidoRequestDTO dados)
+        {
+            var pessoa = await GetIdAssistidoAsync(cpfPessoa);
+            var idPessoa = pessoa?.Dados?.Id
+                ?? throw new ApiException(404);
+
+            var payload = new AtualizarPessoaVerdeDTO
+            {
+                IdPessoa = idPessoa,
+                Endereco = dados.Endereco,
+                Telefone = dados.Telefone,
+                Email = dados.Email,
+            };
+
+            var (_, body) = await _consultaVerdeClient.PutAsync("pessoa", payload);
+            return body ?? JsonDocument.Parse("{}");
         }
     }
 }
