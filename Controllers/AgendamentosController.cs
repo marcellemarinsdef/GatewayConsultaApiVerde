@@ -1,14 +1,14 @@
-﻿using GatewayConsultaApiVerde.Models.Responses;
 using GatewayConsultaApiVerde.Services;
+using GatewayConsultaApiVerde.Exceptions;
+using GatewayConsultaApiVerde.Models;
 using GatewayConsultaApiVerde.Services.Agendamentos;
 using Microsoft.AspNetCore.Mvc;
 using Polly.Timeout;
 
 namespace GatewayConsultaApiVerde.Controllers
 {
-    [ApiController]
     [Route("api/agendamentos")]
-    public class AgendamentosController : Controller
+    public class AgendamentosController : ApiControllerBase
     {
         private readonly IAgendamentosService _client;
 
@@ -29,13 +29,15 @@ namespace GatewayConsultaApiVerde.Controllers
         ///<returns>Dados de agendamentos do assistido</returns>
         [HttpGet("{cpf}")]
         [ProducesResponseType(typeof(AgendamentosResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status504GatewayTimeout)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> Get(string cpf)
         {
             if (string.IsNullOrWhiteSpace(cpf))
             {
-                return BadRequest("Cpf obrigatório.");
+                return ErroParametroInvalido("Cpf do assistido obrigatório");
             }
 
             try
@@ -46,10 +48,11 @@ namespace GatewayConsultaApiVerde.Controllers
             }
             catch (TimeoutRejectedException)
             {
-                return StatusCode(
-                    StatusCodes.Status504GatewayTimeout,
-                    "Tempo limite excedido ao consultar os agendamentos."
-                );
+                return ErroTimeout("Tempo limite excedido ao consultar os agendamentos.");
+            }
+            catch (ApiException ex)
+            {
+                return ErroApi(ex);
             }
         }
     }

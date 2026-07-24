@@ -1,13 +1,13 @@
-﻿using GatewayConsultaApiVerde.Models.Responses;
+using GatewayConsultaApiVerde.Exceptions;
+using GatewayConsultaApiVerde.Models;
 using GatewayConsultaApiVerde.Services.Processo;
 using Microsoft.AspNetCore.Mvc;
 using Polly.Timeout;
 
 namespace GatewayConsultaApiVerde.Controllers
 {
-    [ApiController]
     [Route("api/processo")]
-    public class ProcessoController : Controller
+    public class ProcessoController : ApiControllerBase
     {
         private readonly IProcessoService _processoService;
 
@@ -28,13 +28,15 @@ namespace GatewayConsultaApiVerde.Controllers
         ///<returns>Movimento do processo</returns>
         [HttpGet("{numeroProcesso}")]
         [ProducesResponseType(typeof(ProcessoResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status504GatewayTimeout)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> Get(string numeroProcesso)
         {
             if (string.IsNullOrWhiteSpace(numeroProcesso))
             {
-                return BadRequest("Número do processo obrigatório.");
+                return ErroParametroInvalido("Número do processo obrigatório");
             }
 
             try
@@ -45,10 +47,11 @@ namespace GatewayConsultaApiVerde.Controllers
             }
             catch (TimeoutRejectedException)
             {
-                return StatusCode(
-                    StatusCodes.Status504GatewayTimeout,
-                    "Tempo limite excedido ao consultar o processo."
-                );
+                return ErroTimeout("Tempo limite excedido ao consultar o processo.");
+            }
+            catch (ApiException ex)
+            {
+                return ErroApi(ex);
             }
         }
     }

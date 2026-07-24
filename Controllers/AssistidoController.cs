@@ -1,14 +1,14 @@
-﻿using GatewayConsultaApiVerde.Models;
 using GatewayConsultaApiVerde.Models.Responses;
+using GatewayConsultaApiVerde.Exceptions;
+using GatewayConsultaApiVerde.Models;
 using GatewayConsultaApiVerde.Services.Assistido;
 using Microsoft.AspNetCore.Mvc;
 using Polly.Timeout;
 
 namespace GatewayConsultaApiVerde.Controllers
 {
-    [ApiController]
     [Route("api/assistido")]
-    public class AssistidoController : Controller
+    public class AssistidoController : ApiControllerBase
     {
         private readonly IAssistidoService _client;
 
@@ -29,13 +29,15 @@ namespace GatewayConsultaApiVerde.Controllers
         ///<returns>Dados de cadastro do assistido</returns>
         [HttpGet("{cpf}")]
         [ProducesResponseType(typeof(AssistidoResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status504GatewayTimeout)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status504GatewayTimeout)]
         public async Task<IActionResult> Get(string cpf)
         {
             if (string.IsNullOrWhiteSpace(cpf))
             {
-                return BadRequest("Cpf obrigatório.");
+                return ErroParametroInvalido("Cpf do assistido obrigatório");
             }
 
             try
@@ -46,10 +48,72 @@ namespace GatewayConsultaApiVerde.Controllers
             }
             catch (TimeoutRejectedException)
             {
-                return StatusCode(
-                    StatusCodes.Status504GatewayTimeout,
-                    "Tempo limite excedido ao consultar o cpf."
-                );
+                return ErroTimeout("Tempo limite excedido ao consultar o cpf.");
+            }
+            catch (ApiException ex)
+            {
+                return ErroApi(ex);
+            }
+        }
+
+        ///<summary>
+        ///Cadastra um novo assistido no Verde.
+        ///</summary>
+        ///<param name="dados">Dados completos do assistido (nome, cpf, endereço, telefones, email, dtNascimento)</param>
+        [HttpPost]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status504GatewayTimeout)]
+        public async Task<IActionResult> Post([FromBody] CadastrarAssistidoRequestDTO dados)
+        {
+            try
+            {
+                var resultado = await _client.CriarAssistidoAsync(dados);
+                return Ok(resultado);
+            }
+            catch (TimeoutRejectedException)
+            {
+                return ErroTimeout("Tempo limite excedido ao cadastrar assistido.");
+            }
+            catch (ApiException ex)
+            {
+                return ErroApi(ex);
+            }
+        }
+
+        ///<summary>
+        ///Atualiza os dados de um assistido existente (endereço, telefone, email).
+        ///</summary>
+        ///<param name="cpf">Número do cpf do assistido</param>
+        ///<param name="dados">Campos a atualizar</param>
+        [HttpPut("{cpf}")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status504GatewayTimeout)]
+        public async Task<IActionResult> Put(string cpf, [FromBody] AtualizarAssistidoRequestDTO dados)
+        {
+            if (string.IsNullOrWhiteSpace(cpf))
+            {
+                return ErroParametroInvalido("Cpf do assistido obrigatório");
+            }
+
+            try
+            {
+                var resultado = await _client.AtualizarAssistidoAsync(cpf, dados);
+                return Ok(resultado);
+            }
+            catch (TimeoutRejectedException)
+            {
+                return ErroTimeout("Tempo limite excedido ao atualizar assistido.");
+            }
+            catch (ApiException ex)
+            {
+                return ErroApi(ex);
             }
         }
     }
