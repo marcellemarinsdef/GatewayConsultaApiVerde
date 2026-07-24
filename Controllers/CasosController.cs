@@ -36,7 +36,7 @@ namespace GatewayConsultaApiVerde.Controllers
         {
             if (string.IsNullOrWhiteSpace(cpf))
             {
-                return BadRequest("Cpf do assistido obrigatório");
+                return BadRequest("Cpf obrigatório.");
             }
 
             try
@@ -49,7 +49,7 @@ namespace GatewayConsultaApiVerde.Controllers
             {
                 return StatusCode(
                     StatusCodes.Status504GatewayTimeout,
-                    "Tempo limite excedido ao consultar os agendamentos."
+                    "Tempo limite excedido ao consultar os casos."
                 );
             }
         }

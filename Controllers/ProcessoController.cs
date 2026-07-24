@@ -35,7 +35,7 @@ namespace GatewayConsultaApiVerde.Controllers
         {
             if (string.IsNullOrWhiteSpace(numeroProcesso))
             {
-                return BadRequest("Número do processo obrigatório");
+                return BadRequest("Número do processo obrigatório.");
             }
 
             try

@@ -1,5 +1,6 @@
 ﻿using GatewayConsultaApiVerde.Exceptions;
 using GatewayConsultaApiVerde.Models;
+using GatewayConsultaApiVerde.Services.ConsultasBase;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
@@ -8,34 +9,19 @@ namespace GatewayConsultaApiVerde.Services.Processo
 {
     public class ProcessoService: IProcessoService
     {
-        
-        private readonly HttpClient _httpClient;
+        private readonly IConsultaVerdeClient _consultaVerdeClient;
         private readonly ConsultaVerdeSettings _consultaVerdeSettings;
-        public ProcessoService(HttpClient httpClient, IOptions<ConsultaVerdeSettings> consultaVerdeSettings)
+
+        public ProcessoService(IConsultaVerdeClient consultaVerdeClient, IOptions<ConsultaVerdeSettings> consultaVerdeSettings)
         {
-            _httpClient = httpClient;
+            _consultaVerdeClient = consultaVerdeClient;
             _consultaVerdeSettings = consultaVerdeSettings.Value;
         }
 
         public async Task<JsonDocument> GetProcessoAsync(string numeroProcesso)
-        {
-            var clientId = _consultaVerdeSettings.ClientID;
-            var token = _consultaVerdeSettings.Token;
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"processo/consultar/{numeroProcesso}" );
-            request.Headers.Add("Authorization", token);
-            request.Headers.Add("X-Client-ID", clientId);
-
-            var response = await _httpClient.SendAsync(request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApiException((int)response.StatusCode);
-            }
-
-            var json = await response.Content.ReadAsStringAsync();
-
-            return JsonDocument.Parse(json);
+        { 
+            return await _consultaVerdeClient.GetAsync(
+                $"processo/consultar/{numeroProcesso}");
         }
     }
 }

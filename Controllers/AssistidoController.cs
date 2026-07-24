@@ -35,7 +35,7 @@ namespace GatewayConsultaApiVerde.Controllers
         {
             if (string.IsNullOrWhiteSpace(cpf))
             {
-                return BadRequest("Cpf do assistido obrigatório");
+                return BadRequest("Cpf obrigatório.");
             }
 
             try
