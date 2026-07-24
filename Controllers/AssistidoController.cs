@@ -1,3 +1,4 @@
+using GatewayConsultaApiVerde.Models.Responses;
 using GatewayConsultaApiVerde.Exceptions;
 using GatewayConsultaApiVerde.Models;
 using GatewayConsultaApiVerde.Services.Assistido;
@@ -19,17 +20,15 @@ namespace GatewayConsultaApiVerde.Controllers
         ///Realiza uma consulta à API do Verde utilizando o número do cpf para retornar os dados do assistido.
         ///</summary>
         ///<remarks>
-        ///<para>
-        ///Parâmetro: cpf.
+        ///Parâmetro: cpf. 
         ///O endpoint aceita o número do cpf em um dos seguintes formatos:
         ///00000000000
         ///000.000.000-00
-        ///</para>
         /// </remarks>
         ///<param name="cpf">Número do cpf do assistido</param>
         ///<returns>Dados de cadastro do assistido</returns>
         [HttpGet("{cpf}")]
-        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AssistidoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]

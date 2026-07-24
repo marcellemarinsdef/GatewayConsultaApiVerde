@@ -27,39 +27,6 @@ builder.Services.AddSwaggerGen();
 //Configuração do HttpClient
 
 builder.Services
-    .AddHttpClient<IProcessoService, ProcessoService>(client =>
-    {
-        var baseUrl = Environment.GetEnvironmentVariable("BASE_URL_VERDE")
-     ?? throw new InvalidOperationException(
-         "BASE_URL_VERDE não configurada.");
-
-        client.BaseAddress = new Uri(baseUrl);
-    })
-    .AddStandardResilienceHandler(options =>
-    {
-        options.Retry.MaxRetryAttempts = 2;
-        options.Retry.Delay = TimeSpan.FromSeconds(2);
-        options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(15);
-        options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(45);
-    });
-
-builder.Services
-    .AddHttpClient<IAssistidoService, AssistidoService>(client =>
-    {
-        var baseUrl = Environment.GetEnvironmentVariable("BASE_URL_VERDE")
-     ?? throw new InvalidOperationException(
-         "BASE_URL_VERDE não configurada.");
-
-        client.BaseAddress = new Uri(baseUrl);
-    }).AddStandardResilienceHandler(options =>
-    {
-        options.Retry.MaxRetryAttempts = 2;
-        options.Retry.Delay = TimeSpan.FromSeconds(2);
-        options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(15);
-        options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(45);
-    });
-
-builder.Services
     .AddHttpClient<IConsultaVerdeClient, ConsultaVerdeClient>(client =>
     {
         var baseUrl = Environment.GetEnvironmentVariable("BASE_URL_VERDE")
@@ -75,9 +42,11 @@ builder.Services
         options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(45);
     });
 
+builder.Services.AddScoped<IAssistidoService, AssistidoService>();
 builder.Services.AddScoped<ICasosService, CasosService>();
 builder.Services.AddScoped<IAgendamentosService, AgendamentosService>();
 builder.Services.AddScoped<IAgendamentoService, AgendamentoService>();
+builder.Services.AddScoped<IProcessoService, ProcessoService>();
 
 
 builder.Services.Configure<ConsultaVerdeSettings>(options =>
