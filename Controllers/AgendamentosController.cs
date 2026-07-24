@@ -4,6 +4,7 @@ using GatewayConsultaApiVerde.Models;
 using GatewayConsultaApiVerde.Services.Agendamentos;
 using Microsoft.AspNetCore.Mvc;
 using Polly.Timeout;
+using GatewayConsultaApiVerde.Models.Responses;
 
 namespace GatewayConsultaApiVerde.Controllers
 {

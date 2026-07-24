@@ -1,5 +1,6 @@
 using GatewayConsultaApiVerde.Exceptions;
 using GatewayConsultaApiVerde.Models;
+using GatewayConsultaApiVerde.Models.Responses;
 using GatewayConsultaApiVerde.Services.Processo;
 using Microsoft.AspNetCore.Mvc;
 using Polly.Timeout;
