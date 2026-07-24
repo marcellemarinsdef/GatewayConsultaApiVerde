@@ -9,5 +9,6 @@ namespace GatewayConsultaApiVerde.Services.ConsultasBase
         // StatusCode devolvido pra controller distinguir sucesso 200 de 204
         // (ex: desmarcar agendamento — ambos são sucesso, corpo diferente).
         Task<(int StatusCode, JsonDocument? Body)> PostAsync(string endpoint, object payload);
+        Task<(int StatusCode, JsonDocument? Body)> PutAsync(string endpoint, object payload);
     }
 }
