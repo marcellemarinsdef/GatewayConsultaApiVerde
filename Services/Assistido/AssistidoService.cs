@@ -1,21 +1,17 @@
 ﻿using GatewayConsultaApiVerde.Exceptions;
 using GatewayConsultaApiVerde.Models;
 using GatewayConsultaApiVerde.Services.ConsultasBase;
-using Microsoft.Extensions.Options;
-using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace GatewayConsultaApiVerde.Services.Assistido
 {
     public class AssistidoService : IAssistidoService
     {
-        private readonly ConsultaVerdeSettings _consultaVerdeSettings;
         private readonly IConsultaVerdeClient _consultaVerdeClient;
 
-        public AssistidoService(IConsultaVerdeClient consultaVerdeClient, IOptions<ConsultaVerdeSettings> consultaVerdeSettings)
+        public AssistidoService(IConsultaVerdeClient consultaVerdeClient)
         {
             _consultaVerdeClient = consultaVerdeClient;
-            _consultaVerdeSettings = consultaVerdeSettings.Value;
         }
 
         public async Task<JsonDocument> GetAssistidoAsync(string cpfPessoa)
@@ -36,29 +32,10 @@ namespace GatewayConsultaApiVerde.Services.Assistido
             });
         }
 
-        private HttpRequestMessage NovaRequisicaoPessoa(HttpMethod metodo, object corpo)
-        {
-            var request = new HttpRequestMessage(metodo, "pessoa")
-            {
-                Content = JsonContent.Create(corpo)
-            };
-            request.Headers.Add("Authorization", _consultaVerdeSettings.Token);
-            request.Headers.Add("X-Client-ID", _consultaVerdeSettings.ClientID);
-            return request;
-        }
-
         public async Task<JsonDocument> CriarAssistidoAsync(CadastrarAssistidoRequestDTO dados)
         {
-            var request = NovaRequisicaoPessoa(HttpMethod.Post, dados);
-            var response = await _httpClient.SendAsync(request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApiException((int)response.StatusCode);
-            }
-
-            var json = await response.Content.ReadAsStringAsync();
-            return JsonDocument.Parse(json);
+            var (_, body) = await _consultaVerdeClient.PostAsync("pessoa", dados);
+            return body ?? JsonDocument.Parse("{}");
         }
 
         // Verde identifica a pessoa por idPessoa (numérico), não cpf — resolve
@@ -77,16 +54,8 @@ namespace GatewayConsultaApiVerde.Services.Assistido
                 Email = dados.Email,
             };
 
-            var request = NovaRequisicaoPessoa(HttpMethod.Put, payload);
-            var response = await _httpClient.SendAsync(request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApiException((int)response.StatusCode);
-            }
-
-            var json = await response.Content.ReadAsStringAsync();
-            return JsonDocument.Parse(json);
+            var (_, body) = await _consultaVerdeClient.PutAsync("pessoa", payload);
+            return body ?? JsonDocument.Parse("{}");
         }
     }
 }
