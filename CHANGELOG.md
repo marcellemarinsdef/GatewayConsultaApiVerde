@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/compare/v1.1.0...v1.1.1) (2026-07-27)
+
+
+### Bug Fixes
+
+* correções para o semantic release ([e4297f8](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/commit/e4297f8f7ec4f1d4b8096346e3ce8234059ad002))
+
 # [1.1.0](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/compare/v1.0.0...v1.1.0) (2026-07-27)
 
 
