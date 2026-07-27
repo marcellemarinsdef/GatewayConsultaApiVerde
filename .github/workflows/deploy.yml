@@ -1,9 +1,11 @@
 name: Build, Test and Deploy
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_run:
+    workflows:
+      - Semantic Release
+    types:
+      - completed
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
@@ -23,7 +25,9 @@ jobs:
           fetch-depth: 0
 
       - name: Definir TAG
-        run: echo "IMAGE_TAG=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+        run: |
+          git fetch --tags
+          echo "IMAGE_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
 
       ####################################################
       # BUILD DA IMAGEM DE TESTE (Dockerfile)
