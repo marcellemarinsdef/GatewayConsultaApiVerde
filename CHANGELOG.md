@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/compare/v1.0.0...v1.1.0) (2026-07-27)
+
+
+### Features
+
+* teste ([c93cafc](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/commit/c93cafc2db2b0e8a6092e619dcb67c445f6cecab))
+
 # 1.0.0 (2026-07-27)
 
 
