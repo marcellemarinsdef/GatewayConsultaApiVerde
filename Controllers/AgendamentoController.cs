@@ -131,5 +131,65 @@ namespace GatewayConsultaApiVerde.Controllers
                 return ErroApi(ex);
             }
         }
+
+        ///<summary>
+        ///Cria um agendamento novo ("primeiro atendimento", sem idEvento existente).
+        ///</summary>
+        [HttpPost("agendar")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status504GatewayTimeout)]
+        public async Task<IActionResult> Agendar([FromBody] AgendarRequestDTO dados)
+        {
+            try
+            {
+                var (statusCode, body) = await _client.AgendarAsync(dados);
+                return StatusCode(statusCode, body);
+            }
+            catch (TimeoutRejectedException)
+            {
+                return ErroTimeout("Tempo limite excedido ao agendar.");
+            }
+            catch (ApiException ex)
+            {
+                return ErroApi(ex);
+            }
+        }
+
+        ///<summary>
+        ///Verifica se já existe agendamento do mesmo assunto pra essa pessoa (evita duplicar).
+        ///</summary>
+        ///<param name="idPessoa">Id da pessoa no Verde</param>
+        ///<param name="idAssunto">Id do assunto/motivo</param>
+        [HttpGet("verificar-duplicados")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status504GatewayTimeout)]
+        public async Task<IActionResult> VerificarDuplicados([FromQuery] int idPessoa, [FromQuery] int idAssunto)
+        {
+            if (idPessoa <= 0 || idAssunto <= 0)
+            {
+                return ErroParametroInvalido("idPessoa e idAssunto obrigatórios");
+            }
+
+            try
+            {
+                var duplicados = await _client.VerificarDuplicadosAsync(idPessoa, idAssunto);
+                return Ok(duplicados);
+            }
+            catch (TimeoutRejectedException)
+            {
+                return ErroTimeout("Tempo limite excedido ao verificar duplicados.");
+            }
+            catch (ApiException ex)
+            {
+                return ErroApi(ex);
+            }
+        }
     }
 }
