@@ -20,15 +20,15 @@ namespace GatewayConsultaApiVerde.Models
         [JsonPropertyName("idProcesso")]
         public int? IdProcesso { get; set; }
         [JsonPropertyName("resumoAtendimento")]
-        public string ResumoAtendimento { get; set; }
+        public string? ResumoAtendimento { get; set; }
         // "PRIMEIRO_ATENDIMENTO" | "PRISIONAL" (enum do Verde)
         [JsonPropertyName("fluxoAtendimento")]
         public string FluxoAtendimento { get; set; } = "PRIMEIRO_ATENDIMENTO";
         [JsonPropertyName("dataVaga")]
-        public string DataVaga { get; set; }
+        public string? DataVaga { get; set; }
         [JsonPropertyName("dataComplemento")]
-        public string DataComplemento { get; set; }
+        public string? DataComplemento { get; set; }
         [JsonPropertyName("textoComplemento")]
-        public string TextoComplemento { get; set; }
+        public string? TextoComplemento { get; set; }
     }
 }

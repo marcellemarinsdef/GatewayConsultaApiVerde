@@ -19,7 +19,7 @@ namespace GatewayConsultaApiVerde.Models
         public int IdAssunto { get; set; }
         // "Remoto" | "Presencial" (enum do Verde)
         [JsonPropertyName("preferenciaAtendimento")]
-        public string PreferenciaAtendimento { get; set; }
+        public string? PreferenciaAtendimento { get; set; }
         [JsonPropertyName("idCaso")]
         public int? IdCaso { get; set; }
         [JsonPropertyName("idProcesso")]
@@ -30,12 +30,12 @@ namespace GatewayConsultaApiVerde.Models
         [JsonPropertyName("fluxoEncaminhamento")]
         public string FluxoEncaminhamento { get; set; } = "PRIMEIRO_ATENDIMENTO";
         [JsonPropertyName("motivoUrgencia")]
-        public string MotivoUrgencia { get; set; }
+        public string? MotivoUrgencia { get; set; }
         [JsonPropertyName("dataComplemento")]
-        public string DataComplemento { get; set; }
+        public string? DataComplemento { get; set; }
         [JsonPropertyName("textoComplemento")]
-        public string TextoComplemento { get; set; }
+        public string? TextoComplemento { get; set; }
         [JsonPropertyName("observacao")]
-        public string Observacao { get; set; }
+        public string? Observacao { get; set; }
     }
 }
