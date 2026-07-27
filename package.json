@@ -8,16 +8,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/marcellemarinsdef/ConsultaProcessoVerde.git"
+    "url": "git+https://github.com/marcellemarinsdef/GatewayConsultaApiVerde.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/marcellemarinsdef/ConsultaProcessoVerde/issues"
+    "url": "https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/issues"
   },
-  "homepage": "https://github.com/marcellemarinsdef/ConsultaProcessoVerde#readme",
+  "homepage": "https://github.com/marcellemarinsdef/GatewayConsultaApiVerde#readme",
   "devDependencies": {
     "@semantic-release/changelog": "^7.0.0",
     "@semantic-release/commit-analyzer": "^13.0.1",

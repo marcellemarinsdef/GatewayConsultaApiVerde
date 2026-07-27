@@ -32,7 +32,7 @@ namespace GatewayConsultaApiVerde.Controllers
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponseDTO), StatusCodes.Status504GatewayTimeout)]
-        public async Task<IActionResult> PrimeiroAtendimento([FromQuery] int idPessoa, [FromQuery] int idAssunto, [FromQuery] string complemento)
+        public async Task<IActionResult> PrimeiroAtendimento([FromQuery] int idPessoa, [FromQuery] int idAssunto, [FromQuery] string? complemento)
         {
             if (idPessoa <= 0 || idAssunto <= 0)
             {
