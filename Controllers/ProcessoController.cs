@@ -23,7 +23,7 @@ namespace GatewayConsultaApiVerde.Controllers
         ///Parâmetro: numeroProcesso. 
         ///O endpoint aceita o número do processo em um dos seguintes formatos:
         ///00000000000000000000
-        ///0000000-00.0000.0.00.0000
+        ///0000000-00.0000.0.00.0000 
         /// </remarks>
         ///<param name="numeroProcesso">Número do processo no verde</param>
         ///<returns>Movimento do processo</returns>
