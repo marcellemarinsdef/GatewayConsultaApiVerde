@@ -2,15 +2,15 @@ name: Build, Test and Deploy
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     permissions:
@@ -19,9 +19,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Definir TAG
-        run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
+        run: echo "IMAGE_TAG=${GITHUB_REF_NAME}" >> $GITHUB_ENV
 
       ####################################################
       # BUILD DA IMAGEM DE TESTE (Dockerfile)
@@ -96,19 +98,11 @@ jobs:
             $ECR_REPOSITORY:$IMAGE_TAG \
             ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
 
-          docker tag \
-            $ECR_REPOSITORY:$IMAGE_TAG \
-            ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
-
-      - name: Push SHA
+      - name: Push versão
         run: |
           docker push \
             ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Push latest
-        run: |
-          docker push \
-            ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
 
       - name: Atualizar Lambda
         run: |
