@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/compare/v1.1.4...v1.1.5) (2026-08-04)
+
+
+### Bug Fixes
+
+* expõe o corpo do erro real do Verde em vez de mensagem genérica ([#43](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/issues/43)) ([7ba9e61](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/commit/7ba9e61bc31d6ba707f3004bdaf2ff37c9e9203f)), closes [maria-ia#20260202](https://github.com/maria-ia/issues/20260202)
+
 ## [1.1.1](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/compare/v1.1.0...v1.1.1) (2026-07-27)
 
 
