@@ -8,11 +8,19 @@
         // código, não parseando a mensagem em português (padroes-rest-nivel2)
         public string Code { get; }
 
-        public ApiException(int statusCode)
+        // corpo bruto que o Verde devolveu (quando houver) — antes disso era
+        // descartado no ConsultaVerdeClient, deixando "Parâmetro inválido"
+        // como única pista de um 400 real da Defensoria (achado no teste
+        // manual do cadastro, 2026-08-04, card maria-ia#20260202). Nullable:
+        // timeout/erro de rede não tem corpo.
+        public string? Detalhe { get; }
+
+        public ApiException(int statusCode, string? detalhe = null)
             : base(GetMessage(statusCode))
         {
             StatusCode = statusCode;
             Code = GetCode(statusCode);
+            Detalhe = detalhe;
         }
 
         private static string GetCode(int statusCode)
