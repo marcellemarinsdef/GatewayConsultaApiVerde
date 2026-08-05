@@ -1,3 +1,10 @@
+## [1.1.7](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/compare/v1.1.6...v1.1.7) (2026-08-05)
+
+
+### Bug Fixes
+
+* reverte dtNascimento no PUT de atualização (Verde rejeita) ([#45](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/issues/45)) ([24fbdd0](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/commit/24fbdd06d1c83365611518d61bd944902a969e23)), closes [gateway#44](https://github.com/gateway/issues/44) [maria-ia#20260202](https://github.com/maria-ia/issues/20260202)
+
 ## [1.1.6](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/compare/v1.1.5...v1.1.6) (2026-08-05)
 
 
