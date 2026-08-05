@@ -60,6 +60,10 @@ namespace GatewayConsultaApiVerde.Models
 
     // Corpo recebido do maria-ia — só o que ele sabe (cpf já vai na URL, não
     // no corpo). idPessoa é resolvido no servidor antes de chamar o Verde.
+    // dtNascimento incluído (maria-ia#20260202): o PUT do Verde trata campo
+    // ausente como "apagar", não "manter" — sem reenviar a data atual, toda
+    // atualização de endereço/telefone/email zerava a data de nascimento
+    // da pessoa no cadastro real da Defensoria.
     public class AtualizarAssistidoRequestDTO
     {
         [JsonPropertyName("endereco")]
@@ -68,6 +72,8 @@ namespace GatewayConsultaApiVerde.Models
         public TelefoneAssistidoDTO Telefone { get; set; }
         [JsonPropertyName("email")]
         public string Email { get; set; }
+        [JsonPropertyName("dtNascimento")]
+        public string DtNascimento { get; set; }
     }
 
     // Corpo efetivamente enviado ao Verde (PUT /integra/pessoa) — com idPessoa
@@ -82,5 +88,7 @@ namespace GatewayConsultaApiVerde.Models
         public TelefoneAssistidoDTO Telefone { get; set; }
         [JsonPropertyName("email")]
         public string Email { get; set; }
+        [JsonPropertyName("dtNascimento")]
+        public string DtNascimento { get; set; }
     }
 }

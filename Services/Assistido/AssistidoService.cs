@@ -52,6 +52,7 @@ namespace GatewayConsultaApiVerde.Services.Assistido
                 Endereco = dados.Endereco,
                 Telefone = dados.Telefone,
                 Email = dados.Email,
+                DtNascimento = dados.DtNascimento,
             };
 
             var (_, body) = await _consultaVerdeClient.PutAsync("pessoa", payload);
