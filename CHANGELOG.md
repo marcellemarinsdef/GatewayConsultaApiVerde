@@ -1,3 +1,10 @@
+## [1.1.6](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/compare/v1.1.5...v1.1.6) (2026-08-05)
+
+
+### Bug Fixes
+
+* PUT de atualização passa a reenviar dtNascimento ([#44](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/issues/44)) ([a23c095](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/commit/a23c095f044e6c267337edeffdac9316aae9ab68)), closes [maria-ia#20260202](https://github.com/maria-ia/issues/20260202)
+
 ## [1.1.5](https://github.com/marcellemarinsdef/GatewayConsultaApiVerde/compare/v1.1.4...v1.1.5) (2026-08-04)
 
 
