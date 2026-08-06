@@ -27,5 +27,11 @@ namespace GatewayConsultaApiVerde.Services.Agendamento
 
         public Task<(int StatusCode, JsonDocument? Body)> DesmarcarAsync(DesmarcarRequestDTO dados) =>
             _consultaVerdeClient.PostAsync("agendamento/desmarcar", dados);
+
+        public Task<(int StatusCode, JsonDocument? Body)> AgendarAsync(AgendarRequestDTO dados) =>
+            _consultaVerdeClient.PostAsync("agendamento/agendar", dados);
+
+        public Task<JsonDocument> VerificarDuplicadosAsync(int idPessoa, int idAssunto) =>
+            _consultaVerdeClient.GetAsync($"agendamento/verificar-duplicados?idPessoa={idPessoa}&idAssunto={idAssunto}");
     }
 }

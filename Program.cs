@@ -7,9 +7,15 @@ using GatewayConsultaApiVerde.Services.Agendamento;
 using GatewayConsultaApiVerde.Services.Agendamentos;
 using GatewayConsultaApiVerde.Services.Assistido;
 using GatewayConsultaApiVerde.Services.Bedrock;
+using GatewayConsultaApiVerde.Services.Assunto;
+using GatewayConsultaApiVerde.Services.Bloqueio;
 using GatewayConsultaApiVerde.Services.Casos;
 using GatewayConsultaApiVerde.Services.ConsultasBase;
+using GatewayConsultaApiVerde.Services.Encaminhamento;
+using GatewayConsultaApiVerde.Services.Orgao;
+using GatewayConsultaApiVerde.Services.Plantao;
 using GatewayConsultaApiVerde.Services.Processo;
+using GatewayConsultaApiVerde.Services.Recesso;
 using System.Reflection;
 
 if (File.Exists(".env"))
@@ -50,6 +56,12 @@ builder.Services.AddScoped<ICasosService, CasosService>();
 builder.Services.AddScoped<IAgendamentosService, AgendamentosService>();
 builder.Services.AddScoped<IAgendamentoService, AgendamentoService>();
 builder.Services.AddScoped<IProcessoService, ProcessoService>();
+builder.Services.AddScoped<IOrgaoService, OrgaoService>();
+builder.Services.AddScoped<IAssuntoService, AssuntoService>();
+builder.Services.AddScoped<IEncaminhamentoService, EncaminhamentoService>();
+builder.Services.AddScoped<IBloqueioService, BloqueioService>();
+builder.Services.AddScoped<IPlantaoService, PlantaoService>();
+builder.Services.AddScoped<IRecessoService, RecessoService>();
 
 builder.Services.AddScoped<IBedrockService, BedrockService>();
 
