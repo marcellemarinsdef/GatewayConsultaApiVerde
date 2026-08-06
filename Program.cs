@@ -1,9 +1,12 @@
+using Amazon;
+using Amazon.BedrockRuntime;
 using Amazon.Lambda.AspNetCoreServer.Hosting;
 using DotNetEnv;
 using GatewayConsultaApiVerde;
 using GatewayConsultaApiVerde.Services.Agendamento;
 using GatewayConsultaApiVerde.Services.Agendamentos;
 using GatewayConsultaApiVerde.Services.Assistido;
+using GatewayConsultaApiVerde.Services.Bedrock;
 using GatewayConsultaApiVerde.Services.Assunto;
 using GatewayConsultaApiVerde.Services.Bloqueio;
 using GatewayConsultaApiVerde.Services.Casos;
@@ -60,6 +63,7 @@ builder.Services.AddScoped<IBloqueioService, BloqueioService>();
 builder.Services.AddScoped<IPlantaoService, PlantaoService>();
 builder.Services.AddScoped<IRecessoService, RecessoService>();
 
+builder.Services.AddScoped<IBedrockService, BedrockService>();
 
 builder.Services.Configure<ConsultaVerdeSettings>(options =>
 {
@@ -69,6 +73,19 @@ builder.Services.Configure<ConsultaVerdeSettings>(options =>
     options.Token = Environment.GetEnvironmentVariable("TOKEN")
         ?? throw new InvalidOperationException("TOKEN não foi definida.");
 });
+
+builder.Services.Configure<BedrockSettings>(options =>
+{
+    options.ModelId =
+        Environment.GetEnvironmentVariable("BEDROCK_MODEL_ID")
+        ?? "";
+});
+
+builder.Services.AddSingleton<IAmazonBedrockRuntime>(
+    new AmazonBedrockRuntimeClient(
+        Amazon.RegionEndpoint.USEast1
+    )
+);
 
 builder.Services.AddCors(options =>
 {
