@@ -21,10 +21,12 @@ namespace GatewayConsultaApiVerde.Services.Casos
             _assistidoService = assistidoService;
         }
 
-        public async Task<CasosDTO.RespostaDto> GetCasosAsync(string cpfPessoa)
+        public async Task<CasosPaginacaoDTO> GetCasosAsync(
+            string cpfPessoa,
+            int offset = 0,
+            int limit = 5)
         {
             var responseAssistido = await _assistidoService.GetIdAssistidoAsync(cpfPessoa);
-
 
             var idPessoa = responseAssistido?.Dados.Id
                 ?? throw new Exception("Assistido não encontrado.");
@@ -32,15 +34,39 @@ namespace GatewayConsultaApiVerde.Services.Casos
             var json = await _consultaVerdeClient.GetAsync(
                 $"caso/consultar-casos-pessoa/{idPessoa}");
 
-            var dto = JsonSerializer.Deserialize<CasosDTO.RespostaDto>(json);
+            var dto = JsonSerializer.Deserialize<CasosPaginacaoDTO>(json);
 
-            if (dto?.Dados != null)
+            if (dto?.Dados == null)
             {
-                dto.Dados = dto.Dados
-                    .Where(c => c.Status.Equals("aberto", StringComparison.OrdinalIgnoreCase)).ToList();
+                return new CasosPaginacaoDTO
+                {
+                    Dados = [],
+                    TotalCasos = 0,
+                    Offset = offset,
+                    Limit = limit,
+                    TemMais = false,
+                    ProximoOffset = offset
+                };
             }
 
-            return dto;
+            var casos = dto.Dados
+                .Where(c => c.Status.Equals("aberto", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            var pagina = casos
+                .Skip(offset)
+                .Take(limit)
+                .ToList();
+
+            return new CasosPaginacaoDTO
+            {
+                Dados = pagina,
+                TotalCasos = casos.Count,
+                Offset = offset,
+                Limit = limit,
+                TemMais = offset + limit < casos.Count,
+                ProximoOffset = offset + pagina.Count
+            };
         }
     }
 

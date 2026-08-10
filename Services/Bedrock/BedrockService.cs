@@ -28,9 +28,9 @@ namespace GatewayConsultaApiVerde.Services.Bedrock
             {
                 anthropic_version = "bedrock-2023-05-31",
 
-                max_tokens = 350,
+                max_tokens = 100,
 
-                temperature = 0.5,
+                temperature = 0.2,
 
                 top_k = 40,
 
@@ -38,12 +38,12 @@ namespace GatewayConsultaApiVerde.Services.Bedrock
 
                 messages = new[]
                 {
-                new
-                {
-                    role = "user",
-                    content = prompt
+                    new
+                    {
+                        role = "user",
+                        content = prompt
+                     }
                 }
-            }
             };
 
 
