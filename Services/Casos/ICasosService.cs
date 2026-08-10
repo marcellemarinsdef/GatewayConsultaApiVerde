@@ -5,6 +5,7 @@ namespace GatewayConsultaApiVerde.Services.Casos
 {
     public interface ICasosService
     {
-        Task<CasosDTO.RespostaDto> GetCasosAsync(string cpfPessoa);
+        Task<CasosPaginacaoDTO> GetCasosAsync(string cpfPessoa, int offset,
+            int limit);
     }
 }

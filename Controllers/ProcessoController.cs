@@ -82,25 +82,21 @@ namespace GatewayConsultaApiVerde.Controllers
             - Só informe ações que o cidadão deve realizar se elas estiverem explicitamente indicadas.
             - Diferencie fatos já ocorridos de possíveis próximos passos.
             - Se não houver informação suficiente sobre o próximo passo, informe isso.
+            - Não use títulos, subtítulos ou marcadores para organizar a resposta, exceto "Assunto:" e "Movimentações:".
+            - Apenas liste a data das 3 movimentações mais recentes, da mais recente para a mais antiga.
+            - Não explique, interprete ou resuma as movimentações. 
+            - Não escreva caracteres de quebra de linha escapados como "\n". Use quebras de linha reais quando necessário.
+            - Não escreva conclusão ou texto adicional.
 
-            Formato da resposta:
 
-            ### Situação atual
-            Em até 2 frases, explique o estado do processo, o assunto (se houver) e a última movimentação relevante.
+            informe: 
+            
+            - Assunto: [tipo] . [Explique o estado do processo e em que órgão ele está]. Movimentações: [datas]. [Explique em até 2 frases o próximo passo apenas se houver informação suficiente.]
 
-            ### Últimas atualizações
-            Monte uma linha do tempo coesa. 
-            Liste apenas as 2 ou 3 movimentações mais recentes e relevantes:
+            - Se não houver providência para o cidadão, escreva:
+              "Não há nenhuma ação necessária da sua parte."
 
-            - DD/MM/AAAA: descrição simples.
-
-            ### O que acontece agora?
-            Explique em até 2 frases o próximo passo apenas se houver informação suficiente.
-
-            Se não houver providência para o cidadão, escreva:
-            "No momento, não há nenhuma ação necessária da sua parte."
-
-            Não escreva conclusão ou texto adicional.
+            
 
             Dados do processo:
 
