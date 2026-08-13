@@ -1,4 +1,7 @@
+using Amazon;
 using Amazon.Lambda.AspNetCoreServer.Hosting;
+using Amazon.SecretsManager;
+using Amazon.SecretsManager.Model;
 using DotNetEnv;
 using GatewayConsultaApiVerde;
 using GatewayConsultaApiVerde.Services.Agendamento;
@@ -14,6 +17,7 @@ using GatewayConsultaApiVerde.Services.Plantao;
 using GatewayConsultaApiVerde.Services.Processo;
 using GatewayConsultaApiVerde.Services.Recesso;
 using System.Reflection;
+using System.Text.Json;
 
 if (File.Exists(".env"))
 {
@@ -60,14 +64,23 @@ builder.Services.AddScoped<IBloqueioService, BloqueioService>();
 builder.Services.AddScoped<IPlantaoService, PlantaoService>();
 builder.Services.AddScoped<IRecessoService, RecessoService>();
 
+// Credenciais do Verde (CLIENT_ID/TOKEN) vêm do Secrets Manager em produção —
+// TOKEN é um JWT que expira periodicamente, então não pode viver só em env
+// var plana do Lambda (já causou 401 em produção por token vencido, sem
+// nenhum jeito de rotacionar sem redeploy). Fallback pra env var cobre
+// ambiente local sem credencial/permissão AWS pra Secrets Manager.
+using var bootstrapLoggerFactory = LoggerFactory.Create(logging => logging.AddConsole());
+var bootstrapLogger = bootstrapLoggerFactory.CreateLogger("Startup.CredenciaisVerde");
+
+var secretsManagerClient = new AmazonSecretsManagerClient(RegionEndpoint.USEast1);
+builder.Services.AddSingleton<IAmazonSecretsManager>(secretsManagerClient);
+
+var credenciaisVerde = await CarregarCredenciaisVerdeAsync(secretsManagerClient, bootstrapLogger);
 
 builder.Services.Configure<ConsultaVerdeSettings>(options =>
 {
-    options.ClientID = Environment.GetEnvironmentVariable("CLIENT_ID")
-       ?? throw new InvalidOperationException("CLIENT_ID não foi definida.");
-
-    options.Token = Environment.GetEnvironmentVariable("TOKEN")
-        ?? throw new InvalidOperationException("TOKEN não foi definida.");
+    options.ClientID = credenciaisVerde.ClientId;
+    options.Token = credenciaisVerde.Token;
 });
 
 builder.Services.AddCors(options =>
@@ -116,3 +129,57 @@ nos serviços da AWS.
 """);
 
 app.Run();
+
+// Busca CLIENT_ID/TOKEN do secret "maria-chat-prod/gateway-verde" no Secrets
+// Manager (JSON { "CLIENT_ID": "...", "TOKEN": "..." }). Se a busca falhar
+// (sem credencial/permissão AWS — caso comum em desenvolvimento local), cai
+// pro fallback de env var pra não quebrar o startup. Nunca loga o valor das
+// credenciais, só qual fonte foi usada.
+static async Task<(string ClientId, string Token)> CarregarCredenciaisVerdeAsync(
+    IAmazonSecretsManager secretsManager,
+    ILogger logger)
+{
+    const string secretId = "maria-chat-prod/gateway-verde";
+
+    try
+    {
+        var response = await secretsManager.GetSecretValueAsync(new GetSecretValueRequest
+        {
+            SecretId = secretId
+        });
+
+        using var document = JsonDocument.Parse(response.SecretString);
+        var root = document.RootElement;
+
+        var clientId = root.GetProperty("CLIENT_ID").GetString();
+        var token = root.GetProperty("TOKEN").GetString();
+
+        if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(token))
+            throw new InvalidOperationException(
+                $"Secret '{secretId}' não contém CLIENT_ID/TOKEN válidos.");
+
+        logger.LogInformation(
+            "Credenciais do Verde carregadas via Secrets Manager ({SecretId}).",
+            secretId);
+
+        return (clientId, token);
+    }
+    catch (Exception ex)
+    {
+        logger.LogWarning(
+            ex,
+            "Não foi possível carregar credenciais do Verde via Secrets Manager " +
+            "({SecretId}); usando fallback de env var (CLIENT_ID/TOKEN).",
+            secretId);
+
+        var clientId = Environment.GetEnvironmentVariable("CLIENT_ID")
+            ?? throw new InvalidOperationException(
+                "CLIENT_ID não foi definida (falhou no Secrets Manager e não há env var).");
+
+        var token = Environment.GetEnvironmentVariable("TOKEN")
+            ?? throw new InvalidOperationException(
+                "TOKEN não foi definida (falhou no Secrets Manager e não há env var).");
+
+        return (clientId, token);
+    }
+}
