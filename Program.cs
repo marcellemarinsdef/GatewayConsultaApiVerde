@@ -75,12 +75,22 @@ var bootstrapLogger = bootstrapLoggerFactory.CreateLogger("Startup.CredenciaisVe
 var secretsManagerClient = new AmazonSecretsManagerClient(RegionEndpoint.USEast1);
 builder.Services.AddSingleton<IAmazonSecretsManager>(secretsManagerClient);
 
-var credenciaisVerde = await CarregarCredenciaisVerdeAsync(secretsManagerClient, bootstrapLogger);
+// Carregado sob demanda (Lazy), NÃO no boot do processo: o container e o
+// endpoint /health não podem passar a depender de credencial do Verde
+// configurada (quebraria o smoke test do CI, que sobe a imagem sem
+// nenhuma env var de Verde só pra checar que o app inicia). A busca real
+// só acontece quando algum serviço que precisa do Verde é resolvido pela
+// primeira vez (IOptions<ConsultaVerdeSettings> é lazy por padrão), e uma
+// única vez graças ao Lazy<Task<>>.
+var credenciaisVerdeLazy = new Lazy<Task<(string ClientId, string Token)>>(
+    () => CarregarCredenciaisVerdeAsync(secretsManagerClient, bootstrapLogger),
+    LazyThreadSafetyMode.ExecutionAndPublication);
 
 builder.Services.Configure<ConsultaVerdeSettings>(options =>
 {
-    options.ClientID = credenciaisVerde.ClientId;
-    options.Token = credenciaisVerde.Token;
+    var credenciais = credenciaisVerdeLazy.Value.GetAwaiter().GetResult();
+    options.ClientID = credenciais.ClientId;
+    options.Token = credenciais.Token;
 });
 
 builder.Services.AddCors(options =>
